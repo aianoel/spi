@@ -50,7 +50,7 @@ export class MemStorage implements IStorage {
     this.admins.set(1, {
       id: 1,
       username: "admin",
-      password: "$2b$10$nDAcr/Mm79074HW6GI/tdOVGt38jBAjePNiG/HQctqhIqiwUjjAri", // password: "password"
+      password: "$2b$10$ApDcLlayp0Vw2imr5SPat.QtvXC4BMpTKuxKKtqVuVknMsJh85N/i", // password: "password"
       full_name: "System Administrator",
       role: "admin",
       created_at: new Date("2025-08-10T14:50:26.000Z"),
