@@ -11,6 +11,7 @@ import Students from "@/pages/students";
 import Children from "@/pages/children";
 import Admins from "@/pages/admins";
 import Reports from "@/pages/reports";
+import EnrollmentForm from "@/pages/enrollment-form";
 import NotFound from "@/pages/not-found";
 
 import Sidebar from "@/components/layout/sidebar";
@@ -34,6 +35,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/login" component={Login} />
+      <Route path="/enrollment" component={EnrollmentForm} />
       <Route path="/">
         <ProtectedRoute>
           <AppLayout>
