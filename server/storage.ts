@@ -320,6 +320,7 @@ export class MemStorage implements IStorage {
     studentsData.forEach(studentData => {
       this.students.set(studentData.id, {
         ...studentData,
+        birth_date: studentData.birth_date ? new Date(studentData.birth_date) : null,
         father_education: null,
         father_occupation: null,
         father_employer: null,

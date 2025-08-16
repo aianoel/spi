@@ -1,19 +1,19 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, date, timestamp, serial } from "drizzle-orm/pg-core";
+import { mysqlTable, varchar, int, date, timestamp } from "drizzle-orm/mysql-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const admins = pgTable("admins", {
-  id: serial("id").primaryKey(),
+export const admins = mysqlTable("admins", {
+  id: int("id").primaryKey().autoincrement(),
   username: varchar("username", { length: 50 }).notNull().unique(),
   password: varchar("password", { length: 255 }).notNull(),
   full_name: varchar("full_name", { length: 100 }).notNull(),
   role: varchar("role", { length: 10 }).notNull().default("admin"), // 'admin' or 'staff'
-  created_at: timestamp("created_at").notNull().defaultNow(),
+  created_at: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const student_inventory = pgTable("student_inventory", {
-  id: serial("id").primaryKey(),
+export const student_inventory = mysqlTable("student_inventory", {
+  id: int("id").primaryKey().autoincrement(),
   department: varchar("department", { length: 100 }),
   year: varchar("year", { length: 50 }),
   level: varchar("level", { length: 100 }),
@@ -30,7 +30,7 @@ export const student_inventory = pgTable("student_inventory", {
   address: varchar("address", { length: 255 }),
   contact_number: varchar("contact_number", { length: 50 }),
   father_name: varchar("father_name", { length: 150 }),
-  father_age: integer("father_age"),
+  father_age: int("father_age"),
   father_education: varchar("father_education", { length: 150 }),
   father_occupation: varchar("father_occupation", { length: 150 }),
   father_employer: varchar("father_employer", { length: 150 }),
@@ -38,7 +38,7 @@ export const student_inventory = pgTable("student_inventory", {
   father_citizenship: varchar("father_citizenship", { length: 100 }),
   father_contact: varchar("father_contact", { length: 100 }),
   mother_name: varchar("mother_name", { length: 150 }),
-  mother_age: integer("mother_age"),
+  mother_age: int("mother_age"),
   mother_education: varchar("mother_education", { length: 150 }),
   mother_occupation: varchar("mother_occupation", { length: 150 }),
   mother_employer: varchar("mother_employer", { length: 150 }),
@@ -46,7 +46,7 @@ export const student_inventory = pgTable("student_inventory", {
   mother_citizenship: varchar("mother_citizenship", { length: 100 }),
   mother_contact: varchar("mother_contact", { length: 100 }),
   guardian_name: varchar("guardian_name", { length: 150 }),
-  guardian_age: integer("guardian_age"),
+  guardian_age: int("guardian_age"),
   guardian_education: varchar("guardian_education", { length: 150 }),
   guardian_occupation: varchar("guardian_occupation", { length: 150 }),
   guardian_employer: varchar("guardian_employer", { length: 150 }),
@@ -55,11 +55,11 @@ export const student_inventory = pgTable("student_inventory", {
   guardian_contact: varchar("guardian_contact", { length: 100 }),
 });
 
-export const student_children = pgTable("student_children", {
-  id: serial("id").primaryKey(),
-  student_id: integer("student_id").notNull(),
+export const student_children = mysqlTable("student_children", {
+  id: int("id").primaryKey().autoincrement(),
+  student_id: int("student_id").notNull(),
   child_name: varchar("child_name", { length: 150 }),
-  child_age: integer("child_age"),
+  child_age: int("child_age"),
   child_status: varchar("child_status", { length: 50 }),
   child_school: varchar("child_school", { length: 150 }),
   child_occupation: varchar("child_occupation", { length: 150 }),

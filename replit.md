@@ -29,7 +29,7 @@ Preferred communication style: Simple, everyday language.
 - **Type-safe Schema**: Shared TypeScript types between client and server
 
 ## Database Design
-- **PostgreSQL with Drizzle ORM**: Type-safe database operations with schema-first approach
+- **MySQL with Drizzle ORM**: Type-safe database operations with schema-first approach
 - **Three Main Entities**:
   - Admins: System users with role-based permissions (admin/staff)
   - Students: Complete student profiles with personal and academic information
@@ -55,10 +55,10 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## Core Framework Dependencies
-- **@neondatabase/serverless**: PostgreSQL database connectivity for production
-- **drizzle-orm**: Type-safe ORM for database operations
+- **mysql2**: MySQL database driver for database connectivity
+- **drizzle-orm**: Type-safe ORM for database operations with MySQL support
 - **express-session**: Session management middleware
-- **connect-pg-simple**: PostgreSQL session store integration
+- **In-Memory Storage**: Development storage implementation (MySQL schema ready for production)
 
 ## Frontend Libraries
 - **@tanstack/react-query**: Server state management and caching
