@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Plus, Search, Filter, Eye, Edit, Trash2, Download, User, Users } from "lucide-react";
+import { Plus, Search, Filter, Eye, Edit, Trash2, Download, User, Users, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import StudentModal from "@/components/modals/student-modal";
 import type { Student } from "@shared/schema";
 
@@ -25,6 +26,7 @@ export default function Students() {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const limit = 10;
   const offset = (currentPage - 1) * limit;
@@ -78,9 +80,13 @@ export default function Students() {
     setShowModal(true);
   };
 
-  const handleDelete = (studentId: number) => {
-    if (confirm("Are you sure you want to delete this student? This action cannot be undone.")) {
-      deleteStudentMutation.mutate(studentId);
+  const handleViewForm = (studentId: number) => {
+    navigate(`/student-inventory/${studentId}`);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this student?")) {
+      deleteStudentMutation.mutate(id);
     }
   };
 
@@ -185,9 +191,7 @@ export default function Students() {
                 Showing {offset + 1}-{Math.min(offset + limit, data?.total || 0)} of {data?.total || 0} results
               </span>
               <Button
-                variant="outline"
-                size="sm"
-                className="text-primary hover:text-blue-700"
+                className="text-primary hover:text-blue-700 border border-gray-300"
                 data-testid="button-export-students"
               >
                 <Download className="mr-1" size={16} />
@@ -232,7 +236,7 @@ export default function Students() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {data?.students.map((student) => {
+                  {data?.students.map((student: Student) => {
                     const { contact, email } = formatContactInfo(student);
                     return (
                       <tr key={student.id} className="hover:bg-gray-50" data-testid={`row-student-${student.id}`}>
@@ -258,38 +262,40 @@ export default function Students() {
                           <div className="text-sm text-gray-500">{student.birth_place || "N/A"}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             Active
-                          </Badge>
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex items-center space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-primary hover:text-blue-700"
+                            <button
+                              onClick={() => handleViewForm(student.id)}
+                              className="text-green-600 hover:text-green-800 p-1 rounded"
+                              data-testid={`button-view-form-${student.id}`}
+                              title="View Student Inventory Form"
+                            >
+                              <FileText size={16} />
+                            </button>
+                            <button
+                              className="text-primary hover:text-blue-700 p-1 rounded"
                               data-testid={`button-view-${student.id}`}
                             >
                               <Eye size={16} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
+                            </button>
+                            <button
                               onClick={() => handleEdit(student)}
-                              className="text-gray-600 hover:text-gray-800"
+                              className="text-gray-600 hover:text-gray-800 p-1 rounded"
                               data-testid={`button-edit-${student.id}`}
                             >
                               <Edit size={16} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
+                            </button>
+                            <button
                               onClick={() => handleDelete(student.id)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-red-600 hover:text-red-800 p-1 rounded"
                               data-testid={`button-delete-${student.id}`}
                             >
                               <Trash2 size={16} />
-                            </Button>
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -310,38 +316,39 @@ export default function Students() {
                   <span className="font-medium">{data.total}</span> results
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <button
                     onClick={() => setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
+                    className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     data-testid="button-previous-page"
                   >
                     Previous
-                  </Button>
+                  </button>
                   {[...Array(Math.min(5, totalPages))].map((_, i) => {
                     const page = i + 1;
                     return (
-                      <Button
+                      <button
                         key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="sm"
                         onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 border rounded text-sm ${
+                          currentPage === page 
+                            ? 'bg-blue-600 text-white border-blue-600' 
+                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
                         data-testid={`button-page-${page}`}
                       >
                         {page}
-                      </Button>
+                      </button>
                     );
                   })}
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <button
                     onClick={() => setCurrentPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
+                    className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     data-testid="button-next-page"
                   >
                     Next
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>

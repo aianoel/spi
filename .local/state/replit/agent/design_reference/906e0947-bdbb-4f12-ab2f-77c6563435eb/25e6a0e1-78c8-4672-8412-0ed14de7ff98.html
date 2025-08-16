@@ -1,0 +1,1052 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPI Admin Dashboard - Student Profile Information System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#1976D2',
+                    secondary: '#424242',
+                    accent: '#FF5722',
+                    success: '#4CAF50',
+                    warning: '#FF9800',
+                    error: '#F44336'
+                },
+                fontFamily: {
+                    'roboto': ['Roboto', 'sans-serif']
+                }
+            }
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="font-roboto bg-gray-50 overflow-x-hidden">
+    <!-- Login Screen (Initially Hidden) -->
+    <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-semibold text-gray-800">SPI Admin Portal</h1>
+                <p class="text-gray-600 mt-2">Student Profile Information System</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" data-bind="loginForm.username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter your username" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" data-bind="loginForm.password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" data-event="click:handleLogin" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">
+                    <span id="loginButtonText">Sign In</span>
+                    <i id="loginSpinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center text-sm text-gray-500">
+                Default: admin / password
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Layout -->
+    <div id="mainApp" class="flex h-screen bg-gray-50">
+        <!-- Sidebar Navigation -->
+        <!-- @COMPONENT: Sidebar [navigation, user info, menu items] -->
+        <div id="sidebar" class="w-64 bg-white shadow-lg fixed h-full z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">SPI Admin</h2>
+                        <p class="text-sm text-gray-500">v2.0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="p-4 space-y-2">
+                <a href="#" data-page="dashboard" class="nav-link flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-primary font-medium">
+                    <i class="fas fa-chart-dashboard w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" data-page="students" class="nav-link flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-800">
+                    <i class="fas fa-users w-5"></i>
+                    <span>Students</span>
+                </a>
+                <a href="#" data-page="children" class="nav-link flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-800">
+                    <i class="fas fa-child w-5"></i>
+                    <span>Children Records</span>
+                </a>
+                <a href="#" data-page="admins" class="nav-link flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-800">
+                    <i class="fas fa-user-shield w-5"></i>
+                    <span>Admin Users</span>
+                </a>
+                <a href="#" data-page="reports" class="nav-link flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-800">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+            
+            <div class="absolute bottom-0 w-full p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-gray-600 text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-800" data-bind="currentUser.name">System Admin</p>
+                        <p class="text-xs text-gray-500" data-bind="currentUser.role">Administrator</p>
+                    </div>
+                </div>
+                <button data-event="click:handleLogout" class="w-full text-left text-sm text-gray-600 hover:text-gray-800 flex items-center space-x-2">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden hidden"></div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 lg:ml-64 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <!-- @COMPONENT: Header [mobile menu toggle, breadcrumbs, notifications] -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button id="mobileMenuToggle" class="lg:hidden text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        
+                        <nav class="hidden sm:flex space-x-2 text-sm text-gray-500">
+                            <span id="breadcrumb" data-bind="currentPage.breadcrumb">Dashboard</span>
+                        </nav>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <button class="text-gray-600 hover:text-gray-800 relative">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                        </button>
+                        
+                        <div class="hidden sm:flex items-center space-x-2 text-sm">
+                            <span class="text-gray-600">Last login:</span>
+                            <span class="font-medium text-gray-800" data-bind="currentUser.lastLogin">Aug 16, 2025 4:34 AM</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: Header -->
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto p-6">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="page-content">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-semibold text-gray-800 mb-2">Dashboard</h1>
+                        <p class="text-gray-600">Welcome to the Student Profile Information System</p>
+                    </div>
+                    
+                    <!-- Statistics Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Total Students</p>
+                                    <p class="text-3xl font-semibold text-gray-800" data-bind="stats.totalStudents">183</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-primary text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm">
+                                <span class="text-green-600 font-medium">+12%</span>
+                                <span class="text-gray-600 ml-2">from last month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Children Records</p>
+                                    <p class="text-3xl font-semibold text-gray-800" data-bind="stats.totalChildren">144</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-child text-success text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm">
+                                <span class="text-green-600 font-medium">+8%</span>
+                                <span class="text-gray-600 ml-2">from last month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Active Admins</p>
+                                    <p class="text-3xl font-semibold text-gray-800" data-bind="stats.activeAdmins">3</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user-shield text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm">
+                                <span class="text-gray-600">No change</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">System Health</p>
+                                    <p class="text-3xl font-semibold text-success">100%</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-heartbeat text-success text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm">
+                                <span class="text-green-600 font-medium">All systems operational</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-800">Recent Student Registrations</h3>
+                            </div>
+                            <div class="p-6">
+                                <!-- @MAP: recentStudents.map(student => ( -->
+                                <div data-mock="true" class="flex items-center space-x-4 py-3 border-b border-gray-100 last:border-b-0">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-800">Jian Michael P. Vasquez</p>
+                                        <p class="text-sm text-gray-600">Student ID: STU-2025-181</p>
+                                    </div>
+                                    <div class="text-sm text-gray-500">2 days ago</div>
+                                </div>
+                                
+                                <div data-mock="true" class="flex items-center space-x-4 py-3 border-b border-gray-100 last:border-b-0">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-800">Viala Marziah D. Gerilla</p>
+                                        <p class="text-sm text-gray-600">Student ID: STU-2025-183</p>
+                                    </div>
+                                    <div class="text-sm text-gray-500">3 days ago</div>
+                                </div>
+                                
+                                <div data-mock="true" class="flex items-center space-x-4 py-3 border-b border-gray-100 last:border-b-0">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-800">Nastassja Leise B. Tayam</p>
+                                        <p class="text-sm text-gray-600">Student ID: STU-2025-162</p>
+                                    </div>
+                                    <div class="text-sm text-gray-500">5 days ago</div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-800">Quick Actions</h3>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <button data-event="click:navigateToAddStudent" class="w-full flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+                                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-user-plus text-white"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="font-medium text-gray-800">Add New Student</p>
+                                        <p class="text-sm text-gray-600">Register a new student profile</p>
+                                    </div>
+                                </button>
+                                
+                                <button data-event="click:navigateToChildrenRecords" class="w-full flex items-center space-x-3 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+                                    <div class="w-10 h-10 bg-success rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-plus text-white"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="font-medium text-gray-800">Add Child Record</p>
+                                        <p class="text-sm text-gray-600">Link child information to student</p>
+                                    </div>
+                                </button>
+                                
+                                <button data-event="click:exportData" class="w-full flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors duration-200">
+                                    <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-download text-white"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="font-medium text-gray-800">Export Data</p>
+                                        <p class="text-sm text-gray-600">Download student records as CSV</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Page -->
+                <div id="studentsPage" class="page-content hidden">
+                    <div class="mb-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h1 class="text-3xl font-semibold text-gray-800 mb-2">Student Management</h1>
+                                <p class="text-gray-600">Manage student profiles and information</p>
+                            </div>
+                            <button data-event="click:showAddStudentModal" class="mt-4 sm:mt-0 bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Student</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Search and Filters -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Search Students</label>
+                                <div class="relative">
+                                    <input type="text" data-bind="studentFilters.search" placeholder="Search by name, ID, or other details..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
+                                <select data-bind="studentFilters.status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-end">
+                                <button data-event="click:applyFilters" class="w-full bg-gray-600 text-white py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+                                    <i class="fas fa-filter mr-2"></i>
+                                    Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Students Table -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">All Students</h3>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-600" data-bind="studentTable.resultsCount">Showing 1-10 of 183 results</span>
+                                    <button data-event="click:exportStudents" class="text-primary hover:text-blue-700 font-medium text-sm">
+                                        <i class="fas fa-download mr-1"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Info</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Children</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <!-- @MAP: students.map(student => ( -->
+                                    <tr data-mock="true" class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                                                    <i class="fas fa-user text-gray-600"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">Jian Michael P. Vasquez</div>
+                                                    <div class="text-sm text-gray-500">STU-2025-181</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">+63 912 345 6789</div>
+                                            <div class="text-sm text-gray-500">jian.vasquez@email.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                2 Children
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Active
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex items-center space-x-2">
+                                                <button data-event="click:viewStudent" class="text-primary hover:text-blue-700">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button data-event="click:editStudent" class="text-gray-600 hover:text-gray-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button data-event="click:deleteStudent" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr data-mock="true" class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                                                    <i class="fas fa-user text-gray-600"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">Nastassja Leise B. Tayam</div>
+                                                    <div class="text-sm text-gray-500">STU-2025-162</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">+63 917 123 4567</div>
+                                            <div class="text-sm text-gray-500">nastassja.tayam@email.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                1 Child
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Active
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex items-center space-x-2">
+                                                <button data-event="click:viewStudent" class="text-primary hover:text-blue-700">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button data-event="click:editStudent" class="text-gray-600 hover:text-gray-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button data-event="click:deleteStudent" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- @END_MAP )) -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="bg-white px-6 py-4 border-t border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm text-gray-700">
+                                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">183</span> results
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <button data-event="click:previousPage" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50" disabled>
+                                        Previous
+                                    </button>
+                                    <button class="px-3 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-md">1</button>
+                                    <button data-event="click:goToPage" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">2</button>
+                                    <button data-event="click:goToPage" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">3</button>
+                                    <span class="px-3 py-2 text-sm font-medium text-gray-700">...</span>
+                                    <button data-event="click:goToPage" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">19</button>
+                                    <button data-event="click:nextPage" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Children Records Page -->
+                <div id="childrenPage" class="page-content hidden">
+                    <div class="mb-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h1 class="text-3xl font-semibold text-gray-800 mb-2">Children Records</h1>
+                                <p class="text-gray-600">Manage children information linked to students</p>
+                            </div>
+                            <button data-event="click:showAddChildModal" class="mt-4 sm:mt-0 bg-success text-white px-6 py-3 rounded-lg font-medium hover:bg-green-600 transition-colors duration-200 flex items-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Child Record</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Search and Filters for Children -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Search Children</label>
+                                <div class="relative">
+                                    <input type="text" data-bind="childFilters.search" placeholder="Search by child name, parent, school..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Age Range</label>
+                                <select data-bind="childFilters.ageRange" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">All Ages</option>
+                                    <option value="0-5">0-5 years</option>
+                                    <option value="6-12">6-12 years</option>
+                                    <option value="13-18">13-18 years</option>
+                                    <option value="18+">18+ years</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-end">
+                                <button data-event="click:applyChildFilters" class="w-full bg-gray-600 text-white py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+                                    <i class="fas fa-filter mr-2"></i>
+                                    Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Children Table -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800">All Children Records</h3>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-600" data-bind="childTable.resultsCount">Showing 1-10 of 144 results</span>
+                                    <button data-event="click:exportChildren" class="text-primary hover:text-blue-700 font-medium text-sm">
+                                        <i class="fas fa-download mr-1"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Child Info</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parent Student</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School/Occupation</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <!-- @MAP: children.map(child => ( -->
+                                    <tr data-mock="true" class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                                    <i class="fas fa-child text-blue-600"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">Jian Michael P. Vasquez</div>
+                                                    <div class="text-sm text-gray-500">Age: 23 • Single</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Parent Student</div>
+                                            <div class="text-sm text-gray-500">STU-2025-181</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Lufthansa Teknik</div>
+                                            <div class="text-sm text-gray-500">Aircraft Mechanic</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Active
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex items-center space-x-2">
+                                                <button data-event="click:viewChild" class="text-primary hover:text-blue-700">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button data-event="click:editChild" class="text-gray-600 hover:text-gray-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button data-event="click:deleteChild" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr data-mock="true" class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                                    <i class="fas fa-child text-blue-600"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">Jaden Michael P. Vasquez</div>
+                                                    <div class="text-sm text-gray-500">Age: 19 • Single</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Parent Student</div>
+                                            <div class="text-sm text-gray-500">STU-2025-181</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Lyceum of the Philippines University-Cavite</div>
+                                            <div class="text-sm text-gray-500">Student</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Active
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex items-center space-x-2">
+                                                <button data-event="click:viewChild" class="text-primary hover:text-blue-700">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button data-event="click:editChild" class="text-gray-600 hover:text-gray-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button data-event="click:deleteChild" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- @END_MAP )) -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="bg-white px-6 py-4 border-t border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm text-gray-700">
+                                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">144</span> results
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <button data-event="click:previousPage" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50" disabled>
+                                        Previous
+                                    </button>
+                                    <button class="px-3 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-md">1</button>
+                                    <button data-event="click:goToPage" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">2</button>
+                                    <button data-event="click:goToPage" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">3</button>
+                                    <span class="px-3 py-2 text-sm font-medium text-gray-700">...</span>
+                                    <button data-event="click:goToPage" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">15</button>
+                                    <button data-event="click:nextPage" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Users Page -->
+                <div id="adminsPage" class="page-content hidden">
+                    <div class="mb-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h1 class="text-3xl font-semibold text-gray-800 mb-2">Admin Management</h1>
+                                <p class="text-gray-600">Manage system administrators and their roles</p>
+                            </div>
+                            <button data-event="click:showAddAdminModal" class="mt-4 sm:mt-0 bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200 flex items-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Admin</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- @MAP: admins.map(admin => ( -->
+                        <div data-mock="true" class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-shield text-purple-600 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-800">System Administrator</h3>
+                                    <p class="text-sm text-gray-600">@admin</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Role:</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        Administrator
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Status:</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Active
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Created:</span>
+                                    <span class="text-sm text-gray-800">Aug 10, 2025</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Last Login:</span>
+                                    <span class="text-sm text-gray-800">Today</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2">
+                                <button data-event="click:editAdmin" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors duration-200">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button data-event="click:deleteAdmin" class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div data-mock="true" class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-800">Staff Member</h3>
+                                    <p class="text-sm text-gray-600">@staff</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Role:</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        Staff
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Status:</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Active
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Created:</span>
+                                    <span class="text-sm text-gray-800">Aug 12, 2025</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Last Login:</span>
+                                    <span class="text-sm text-gray-800">Yesterday</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2">
+                                <button data-event="click:editAdmin" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors duration-200">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button data-event="click:deleteAdmin" class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                        
+                        <!-- Add New Admin Card -->
+                        <div class="bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center min-h-[280px]">
+                            <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-plus text-gray-500 text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-600 mb-2">Add New Admin</h3>
+                            <p class="text-sm text-gray-500 mb-4">Create a new administrator account</p>
+                            <button data-event="click:showAddAdminModal" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">
+                                Add Admin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div id="reportsPage" class="page-content hidden">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-semibold text-gray-800 mb-2">Reports & Analytics</h1>
+                        <p class="text-gray-600">Generate and view comprehensive reports</p>
+                    </div>
+                    
+                    <!-- Report Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-excel text-blue-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800">Student Report</h3>
+                                    <p class="text-sm text-gray-600">Export all student data</p>
+                                </div>
+                            </div>
+                            <button data-event="click:generateStudentReport" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">
+                                Generate Report
+                            </button>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-csv text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800">Children Report</h3>
+                                    <p class="text-sm text-gray-600">Export children data</p>
+                                </div>
+                            </div>
+                            <button data-event="click:generateChildrenReport" class="w-full bg-success text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors duration-200">
+                                Generate Report
+                            </button>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-chart-pie text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800">Analytics Report</h3>
+                                    <p class="text-sm text-gray-600">System usage analytics</p>
+                                </div>
+                            </div>
+                            <button data-event="click:generateAnalyticsReport" class="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200">
+                                Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Confirmation Modal -->
+    <!-- @COMPONENT: ConfirmationModal [title, message, confirmAction, cancelAction] -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800" data-bind="confirmModal.title">Confirm Action</h3>
+                </div>
+            </div>
+            <p class="text-gray-600 mb-6" data-bind="confirmModal.message">Are you sure you want to perform this action? This cannot be undone.</p>
+            <div class="flex items-center space-x-4">
+                <button data-event="click:cancelConfirmation" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200">
+                    Cancel
+                </button>
+                <button data-event="click:confirmAction" class="flex-1 bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 transition-colors duration-200">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ConfirmationModal -->
+
+    <!-- Success Toast -->
+    <!-- @COMPONENT: Toast [message, type] -->
+    <div id="toast" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3">
+            <i class="fas fa-check-circle text-xl"></i>
+            <span data-bind="toast.message">Action completed successfully!</span>
+            <button data-event="click:closeToast" class="ml-4 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: Toast -->
+
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, and state management
+            
+            // Simple demo functionality for navigation and interactions
+            let currentPage = 'dashboard';
+            let sidebarOpen = false;
+            
+            // Navigation handling
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    showPage(page);
+                });
+            });
+            
+            // Mobile menu toggle
+            document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+                toggleSidebar();
+            });
+            
+            // Sidebar overlay
+            document.getElementById('sidebarOverlay').addEventListener('click', function() {
+                toggleSidebar();
+            });
+            
+            function showPage(page) {
+                // Hide all pages
+                document.querySelectorAll('.page-content').forEach(p => {
+                    p.classList.add('hidden');
+                });
+                
+                // Show selected page
+                document.getElementById(page + 'Page').classList.remove('hidden');
+                
+                // Update navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('bg-blue-50', 'text-primary', 'font-medium');
+                    link.classList.add('text-gray-600');
+                    
+                    if (link.getAttribute('data-page') === page) {
+                        link.classList.add('bg-blue-50', 'text-primary', 'font-medium');
+                        link.classList.remove('text-gray-600');
+                    }
+                });
+                
+                // Update breadcrumb
+                const breadcrumbs = {
+                    dashboard: 'Dashboard',
+                    students: 'Students > Management',
+                    children: 'Children > Records',
+                    admins: 'Admin > Management',
+                    reports: 'Reports > Analytics'
+                };
+                document.getElementById('breadcrumb').textContent = breadcrumbs[page] || page;
+                
+                currentPage = page;
+            }
+            
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                
+                if (sidebarOpen) {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                } else {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                }
+                
+                sidebarOpen = !sidebarOpen;
+            }
+            
+            // Demo login functionality
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const spinner = document.getElementById('loginSpinner');
+                const buttonText = document.getElementById('loginButtonText');
+                
+                spinner.classList.remove('hidden');
+                buttonText.textContent = 'Signing In...';
+                
+                // Simulate login delay
+                setTimeout(() => {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    showToast('Welcome back! Login successful.', 'success');
+                }, 1500);
+            });
+            
+            // Demo toast functionality
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const messageEl = toast.querySelector('[data-bind="toast.message"]');
+                
+                messageEl.textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+            
+            // Demo modal functionality
+            function showConfirmModal(title, message, onConfirm) {
+                const modal = document.getElementById('confirmModal');
+                modal.querySelector('[data-bind="confirmModal.title"]').textContent = title;
+                modal.querySelector('[data-bind="confirmModal.message"]').textContent = message;
+                modal.classList.remove('hidden');
+                
+                const confirmBtn = modal.querySelector('[data-event="click:confirmAction"]');
+                const cancelBtn = modal.querySelector('[data-event="click:cancelConfirmation"]');
+                
+                confirmBtn.onclick = function() {
+                    onConfirm();
+                    modal.classList.add('hidden');
+                };
+                
+                cancelBtn.onclick = function() {
+                    modal.classList.add('hidden');
+                };
+            }
+            
+            // Demo delete functionality
+            document.querySelectorAll('[data-event="click:deleteStudent"], [data-event="click:deleteChild"], [data-event="click:deleteAdmin"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showConfirmModal(
+                        'Delete Record',
+                        'Are you sure you want to delete this record? This action cannot be undone.',
+                        () => {
+                            showToast('Record deleted successfully!', 'success');
+                        }
+                    );
+                });
+            });
+            
+            // Initialize app
+            if (window.location.hash === '#login') {
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            } else {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+            }
+            
+            // Show login screen by default for demo
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        })();
+    </script>
+</body>
+</html>

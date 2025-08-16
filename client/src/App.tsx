@@ -13,6 +13,7 @@ import Admins from "@/pages/admins";
 import Reports from "@/pages/reports";
 import EnrollmentForm from "@/pages/enrollment-form";
 import PrintableForm from "@/pages/printable-form";
+import StudentInventoryPage from "@/pages/student-inventory";
 import NotFound from "@/pages/not-found";
 
 import Sidebar from "@/components/layout/sidebar";
@@ -79,6 +80,11 @@ function Router() {
           <AppLayout>
             <Reports />
           </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/student-inventory/:id">
+        <ProtectedRoute>
+          <StudentInventoryPage />
         </ProtectedRoute>
       </Route>
       <Route component={NotFound} />

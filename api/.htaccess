@@ -1,0 +1,36 @@
+RewriteEngine On
+
+# Enable CORS
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+# Handle preflight OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# API routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route students API
+RewriteRule ^students/?$ students.php [L,QSA]
+RewriteRule ^students/([0-9]+)/?$ students.php [L,QSA]
+RewriteRule ^students/([0-9]+)/children/?$ children.php [L,QSA]
+
+# Route children API
+RewriteRule ^children/?$ children.php [L,QSA]
+RewriteRule ^children/([0-9]+)/?$ children.php [L,QSA]
+RewriteRule ^children/student/([0-9]+)/?$ children.php [L,QSA]
+
+# Route auth API
+RewriteRule ^auth/login/?$ auth.php [L,QSA]
+RewriteRule ^auth/logout/?$ auth.php [L,QSA]
+RewriteRule ^auth/me/?$ auth.php [L,QSA]
+
+# Route admins API
+RewriteRule ^admins/?$ admins.php [L,QSA]
+RewriteRule ^admins/([0-9]+)/?$ admins.php [L,QSA]
+
+# Route stats API
+RewriteRule ^stats/?$ stats.php [L,QSA]
