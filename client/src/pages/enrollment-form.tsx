@@ -465,7 +465,7 @@ export default function EnrollmentForm() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4" data-testid="text-form-title">
-            Student Enrollment Form
+            SPI Form
           </h1>
           <p className="text-lg text-gray-600">
             Please fill out all required information to complete your enrollment
