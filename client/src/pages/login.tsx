@@ -23,7 +23,7 @@ export default function Login() {
   const loginMutation = useLogin();
 
   if (isAuthenticated) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to="/admin/dashboard" />;
   }
 
   const onSubmit = async (data: LoginRequest) => {
