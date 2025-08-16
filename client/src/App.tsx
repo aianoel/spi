@@ -12,6 +12,7 @@ import Children from "@/pages/children";
 import Admins from "@/pages/admins";
 import Reports from "@/pages/reports";
 import EnrollmentForm from "@/pages/enrollment-form";
+import PrintableForm from "@/pages/printable-form";
 import NotFound from "@/pages/not-found";
 
 import Sidebar from "@/components/layout/sidebar";
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/" component={EnrollmentForm} />
       <Route path="/enrollment" component={EnrollmentForm} />
+      <Route path="/print-form" component={PrintableForm} />
       <Route path="/admin">
         <ProtectedRoute>
           <AppLayout>

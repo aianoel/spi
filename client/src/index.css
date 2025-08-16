@@ -87,3 +87,40 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Print Styles */
+@media print {
+  body {
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+  
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  .print\:p-4 {
+    padding: 1rem !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .print\:break-before {
+    page-break-before: always;
+  }
+  
+  .print\:break-after {
+    page-break-after: always;
+  }
+  
+  /* Prevent breaking inside elements */
+  .print\:break-inside-avoid {
+    page-break-inside: avoid;
+  }
+  
+  /* Force background colors and borders to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}

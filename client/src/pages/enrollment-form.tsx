@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertStudentSchema, type InsertStudent } from "@shared/schema";
-import { Loader2, User, Users, GraduationCap, Shield } from "lucide-react";
+import { Loader2, User, Users, GraduationCap, Shield, Printer } from "lucide-react";
 
 export default function EnrollmentForm() {
   const { toast } = useToast();
@@ -447,8 +447,20 @@ export default function EnrollmentForm() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* Admin Login Link */}
-        <div className="flex justify-end mb-4">
+        {/* Action Links */}
+        <div className="flex justify-between items-center mb-4">
+          <Link href="/print-form">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="text-blue-600 hover:text-blue-800"
+              data-testid="button-print-form"
+            >
+              <Printer size={16} className="mr-2" />
+              Print Blank Form
+            </Button>
+          </Link>
+          
           <Link href="/login">
             <Button 
               variant="outline" 
