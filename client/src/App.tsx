@@ -35,43 +35,44 @@ function Router() {
   return (
     <Switch>
       <Route path="/login" component={Login} />
+      <Route path="/" component={EnrollmentForm} />
       <Route path="/enrollment" component={EnrollmentForm} />
-      <Route path="/">
+      <Route path="/admin">
         <ProtectedRoute>
           <AppLayout>
             <Dashboard />
           </AppLayout>
         </ProtectedRoute>
       </Route>
-      <Route path="/dashboard">
+      <Route path="/admin/dashboard">
         <ProtectedRoute>
           <AppLayout>
             <Dashboard />
           </AppLayout>
         </ProtectedRoute>
       </Route>
-      <Route path="/students">
+      <Route path="/admin/students">
         <ProtectedRoute>
           <AppLayout>
             <Students />
           </AppLayout>
         </ProtectedRoute>
       </Route>
-      <Route path="/children">
+      <Route path="/admin/children">
         <ProtectedRoute>
           <AppLayout>
             <Children />
           </AppLayout>
         </ProtectedRoute>
       </Route>
-      <Route path="/admins">
+      <Route path="/admin/admins">
         <ProtectedRoute>
           <AppLayout>
             <Admins />
           </AppLayout>
         </ProtectedRoute>
       </Route>
-      <Route path="/reports">
+      <Route path="/admin/reports">
         <ProtectedRoute>
           <AppLayout>
             <Reports />

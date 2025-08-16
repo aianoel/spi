@@ -23,11 +23,11 @@ export default function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const navItems = [
-    { href: "/dashboard", icon: BarChart3, label: "Dashboard" },
-    { href: "/students", icon: Users, label: "Students" },
-    { href: "/children", icon: Baby, label: "Children Records" },
-    { href: "/admins", icon: Shield, label: "Admin Users" },
-    { href: "/reports", icon: FileText, label: "Reports" },
+    { href: "/admin/dashboard", icon: BarChart3, label: "Dashboard" },
+    { href: "/admin/students", icon: Users, label: "Students" },
+    { href: "/admin/children", icon: Baby, label: "Children Records" },
+    { href: "/admin/admins", icon: Shield, label: "Admin Users" },
+    { href: "/admin/reports", icon: FileText, label: "Reports" },
   ];
 
   const handleLogout = () => {
@@ -81,7 +81,7 @@ export default function Sidebar() {
         {/* Navigation */}
         <nav className="p-4 space-y-2">
           {navItems.map((item) => {
-            const isActive = location === item.href || (item.href === "/dashboard" && location === "/");
+            const isActive = location === item.href || (item.href === "/admin/dashboard" && location === "/admin");
             const Icon = item.icon;
             
             return (

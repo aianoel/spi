@@ -1,6 +1,11 @@
 # Overview
 
-This is a Student Profile Information (SPI) system - a full-stack web application for managing student records, their children's information, and administrative users. The system provides a comprehensive dashboard for educational institutions to track student enrollment data, family information, and generate reports. It features role-based authentication with admin and staff access levels, allowing for secure management of sensitive student data.
+This is a Student Profile Information (SPI) system - a full-stack web application for managing student records, their children's information, and administrative users. The system features a public enrollment form as the main landing page for new student registrations, and a secure admin dashboard for educational institutions to manage student data, family information, and generate reports. It includes role-based authentication with admin and staff access levels for secure management of sensitive student data.
+
+## Application Entry Points
+- **Main Landing Page (/)**: Student enrollment form - first display when system starts
+- **Admin Dashboard (/admin)**: Protected administrative interface for managing student data
+- **Admin Login (/login)**: Authentication page for administrative users
 
 # User Preferences
 
@@ -34,15 +39,18 @@ Preferred communication style: Simple, everyday language.
 ## Authentication & Authorization
 - **Session Management**: Server-side sessions with configurable expiration
 - **Role-based Access**: Admin and staff roles with different permission levels
-- **Protected Routes**: Client-side route protection with authentication context
+- **Protected Routes**: Admin routes (/admin/*) require authentication
+- **Public Access**: Enrollment form accessible without authentication
 - **Password Security**: Bcrypt hashing with salt rounds for password storage
+- **Secure Navigation**: Discrete admin login access from public forms
 
 ## UI/UX Architecture
 - **Responsive Design**: Mobile-first approach with Tailwind CSS breakpoints
 - **Component Library**: Comprehensive UI components from shadcn/ui for consistency
-- **Dark Mode Support**: CSS custom properties for theme switching capability
+- **Multi-step Forms**: Progressive enrollment form with validation and navigation
 - **Toast Notifications**: User feedback system for actions and errors
 - **Modal System**: Reusable modal components for forms and confirmations
+- **Dual Interface**: Public enrollment form + protected admin dashboard
 
 # External Dependencies
 

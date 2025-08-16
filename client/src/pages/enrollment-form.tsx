@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertStudentSchema, type InsertStudent } from "@shared/schema";
-import { Loader2, User, Users, GraduationCap } from "lucide-react";
+import { Loader2, User, Users, GraduationCap, Shield } from "lucide-react";
 
 export default function EnrollmentForm() {
   const { toast } = useToast();
@@ -446,6 +447,21 @@ export default function EnrollmentForm() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
+        {/* Admin Login Link */}
+        <div className="flex justify-end mb-4">
+          <Link href="/login">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="text-gray-600 hover:text-gray-800"
+              data-testid="button-admin-login"
+            >
+              <Shield size={16} className="mr-2" />
+              Admin Login
+            </Button>
+          </Link>
+        </div>
+        
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4" data-testid="text-form-title">
