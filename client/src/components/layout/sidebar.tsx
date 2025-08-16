@@ -86,8 +86,8 @@ export default function Sidebar() {
             
             return (
               <Link key={item.href} href={item.href}>
-                <a
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 ${
+                <div
+                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 cursor-pointer ${
                     isActive
                       ? "bg-blue-50 text-primary font-medium"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
@@ -97,7 +97,7 @@ export default function Sidebar() {
                 >
                   <Icon size={20} />
                   <span>{item.label}</span>
-                </a>
+                </div>
               </Link>
             );
           })}

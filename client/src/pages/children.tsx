@@ -19,7 +19,7 @@ interface ChildrenResponse {
 
 export default function Children() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [ageRangeFilter, setAgeRangeFilter] = useState("");
+  const [ageRangeFilter, setAgeRangeFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [editingChild, setEditingChild] = useState<Child | null>(null);
@@ -41,7 +41,7 @@ export default function Children() {
         params.append("search", searchTerm);
       }
       
-      if (ageRangeFilter) {
+      if (ageRangeFilter && ageRangeFilter !== "all") {
         params.append("ageRange", ageRangeFilter);
       }
 
@@ -152,7 +152,7 @@ export default function Children() {
                   <SelectValue placeholder="All Ages" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Ages</SelectItem>
+                  <SelectItem value="all">All Ages</SelectItem>
                   <SelectItem value="0-5">0-5 years</SelectItem>
                   <SelectItem value="6-12">6-12 years</SelectItem>
                   <SelectItem value="13-18">13-18 years</SelectItem>

@@ -123,7 +123,7 @@ export function DataTable<T extends Record<string, any>>({
                       <SelectValue placeholder="All" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       {filterOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
