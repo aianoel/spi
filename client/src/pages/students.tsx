@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Plus, Search, Filter, Eye, Edit, Trash2, Download, User } from "lucide-react";
+import { Plus, Search, Filter, Eye, Edit, Trash2, Download, User, Users } from "lucide-react";
 import StudentModal from "@/components/modals/student-modal";
 import type { Student } from "@shared/schema";
 

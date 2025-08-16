@@ -45,9 +45,9 @@ export default function AdminModal({ admin, onClose, onSuccess }: AdminModalProp
       const method = isEditing ? "PUT" : "POST";
       
       // Don't send empty password on edit
-      const payload = { ...data };
+      const payload: Partial<InsertAdmin> = { ...data };
       if (isEditing && !payload.password) {
-        delete payload.password;
+        delete (payload as any).password;
       }
       
       const response = await apiRequest(method, url, payload);

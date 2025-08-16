@@ -50,7 +50,7 @@ export class MemStorage implements IStorage {
     this.admins.set(1, {
       id: 1,
       username: "admin",
-      password: "$2y$10$L6lO2PskLTF5wTstla7/HedUMtXp1lNaMYNhJpPZXKFZxc5O2tSOO", // password: "password"
+      password: "$2b$10$nDAcr/Mm79074HW6GI/tdOVGt38jBAjePNiG/HQctqhIqiwUjjAri", // password: "password"
       full_name: "System Administrator",
       role: "admin",
       created_at: new Date("2025-08-10T14:50:26.000Z"),
@@ -73,6 +73,7 @@ export class MemStorage implements IStorage {
       ...insertAdmin,
       id,
       created_at: new Date(),
+      role: insertAdmin.role || "admin",
     };
     this.admins.set(id, admin);
     return admin;
@@ -105,6 +106,46 @@ export class MemStorage implements IStorage {
     const student: Student = {
       ...insertStudent,
       id,
+      // Ensure all required fields are properly typed
+      address: insertStudent.address ?? null,
+      department: insertStudent.department ?? null,
+      year: insertStudent.year ?? null,
+      level: insertStudent.level ?? null,
+      last_name: insertStudent.last_name ?? null,
+      first_name: insertStudent.first_name ?? null,
+      middle_name: insertStudent.middle_name ?? null,
+      photo_path: insertStudent.photo_path ?? null,
+      nickname: insertStudent.nickname ?? null,
+      birth_date: insertStudent.birth_date ?? null,
+      birth_place: insertStudent.birth_place ?? null,
+      gender: insertStudent.gender ?? null,
+      religion: insertStudent.religion ?? null,
+      nationality: insertStudent.nationality ?? null,
+      contact_number: insertStudent.contact_number ?? null,
+      father_name: insertStudent.father_name ?? null,
+      father_age: insertStudent.father_age ?? null,
+      father_education: insertStudent.father_education ?? null,
+      father_occupation: insertStudent.father_occupation ?? null,
+      father_employer: insertStudent.father_employer ?? null,
+      father_work_place: insertStudent.father_work_place ?? null,
+      father_citizenship: insertStudent.father_citizenship ?? null,
+      father_contact: insertStudent.father_contact ?? null,
+      mother_name: insertStudent.mother_name ?? null,
+      mother_age: insertStudent.mother_age ?? null,
+      mother_education: insertStudent.mother_education ?? null,
+      mother_occupation: insertStudent.mother_occupation ?? null,
+      mother_employer: insertStudent.mother_employer ?? null,
+      mother_work_place: insertStudent.mother_work_place ?? null,
+      mother_citizenship: insertStudent.mother_citizenship ?? null,
+      mother_contact: insertStudent.mother_contact ?? null,
+      guardian_name: insertStudent.guardian_name ?? null,
+      guardian_age: insertStudent.guardian_age ?? null,
+      guardian_education: insertStudent.guardian_education ?? null,
+      guardian_occupation: insertStudent.guardian_occupation ?? null,
+      guardian_employer: insertStudent.guardian_employer ?? null,
+      guardian_work_place: insertStudent.guardian_work_place ?? null,
+      guardian_citizenship: insertStudent.guardian_citizenship ?? null,
+      guardian_contact: insertStudent.guardian_contact ?? null,
     };
     this.students.set(id, student);
     return student;
@@ -159,6 +200,11 @@ export class MemStorage implements IStorage {
     const child: Child = {
       ...insertChild,
       id,
+      child_name: insertChild.child_name ?? null,
+      child_age: insertChild.child_age ?? null,
+      child_status: insertChild.child_status ?? null,
+      child_school: insertChild.child_school ?? null,
+      child_occupation: insertChild.child_occupation ?? null,
     };
     this.children.set(id, child);
     return child;
